@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Smartvote Limited</title>
+    <style>
+        :root {
+            --design-width: 1920;
+            --design-height: 270;
+            --stage-scale: min(calc(100vw / (var(--design-width) * 1px)), calc(100vh / (var(--design-height) * 1px)));
+            --stage-width: calc(var(--design-width) * 1px * var(--stage-scale));
+            --stage-height: calc(var(--design-height) * 1px * var(--stage-scale));
+            --stage-red: #b5312c;
+            --left-padding: calc(120px * var(--stage-scale));
+            --right-padding: calc(120px * var(--stage-scale));
+            --side-column-width: calc(240px * var(--stage-scale));
+            --vertical-padding: calc(16px * var(--stage-scale));
+            --logo-height: calc(220px * var(--stage-scale));
+            --content-gap: calc(10px * var(--stage-scale));
+            --content-padding-x: calc(28px * var(--stage-scale));
+            --content-padding-y-top: calc(8px * var(--stage-scale));
+            --content-padding-y-bottom: calc(10px * var(--stage-scale));
+            --content-panel-offset-y: calc(10px * var(--stage-scale));
+            --content-panel-offset-x: calc(22px * var(--stage-scale));
+            --content-panel-radius: calc(18px * var(--stage-scale));
+            --content-panel-shadow-y: calc(6px * var(--stage-scale));
+            --content-panel-shadow-blur: calc(16px * var(--stage-scale));
+            --weather-icon-size: calc(47.04px * var(--stage-scale));
+            --weather-font-size: calc(38.08px * var(--stage-scale));
+            --weather-item-gap: calc(5.6px * var(--stage-scale));
+            --weather-row-height: calc(47.04px * var(--stage-scale));
+            --weather-stack-gap: calc(8.96px * var(--stage-scale));
+            --warning-row-gap: calc(2px * var(--stage-scale));
+            --warning-column-gap: calc(2px * var(--stage-scale));
+            --warning-row-height: calc(78.52px * var(--stage-scale));
+            --weather-column-gap: calc(13.44px * var(--stage-scale));
+            --title-font-size: calc(80px * var(--stage-scale));
+            --title-font-size-en: calc(64px * var(--stage-scale));
+            --time-font-size: calc(52px * var(--stage-scale));
+            --time-font-size-en: calc(38px * var(--stage-scale));
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--stage-red);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 36px;
+        }
+
+        .container {
+            width: var(--stage-width);
+            height: var(--stage-height);
+            padding: var(--vertical-padding) var(--right-padding) var(--vertical-padding) var(--left-padding);
+            background-color: var(--stage-red);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .logo {
+            width: var(--side-column-width);
+            height: 100%;
+            text-align: center;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            height: var(--logo-height);
+            width: auto;
+            display: block;
+            filter: brightness(0) invert(1);
+        }
+
+        .content {
+            position: absolute;
+            top: var(--vertical-padding);
+            bottom: var(--vertical-padding);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            pointer-events: none;
+            width: max-content;
+            max-width: calc(100% - (var(--left-padding) + var(--side-column-width) + var(--right-padding) + var(--side-column-width)));
+        }
+
+        .content-copy {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            align-self: center;
+            gap: var(--content-gap);
+            padding: var(--content-padding-y-top) var(--content-padding-x) var(--content-padding-y-bottom);
+            isolation: isolate;
+        }
+
+        .content-copy::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--content-panel-offset-y)) calc(-1 * var(--content-panel-offset-x));
+            background: rgba(181, 49, 44, 0.82);
+            border-radius: var(--content-panel-radius);
+            box-shadow: 0 var(--content-panel-shadow-y) var(--content-panel-shadow-blur) rgba(181, 49, 44, 0.14);
+            z-index: -1;
+        }
+
+        .weather-zone {
+            position: absolute;
+            top: var(--vertical-padding);
+            right: var(--right-padding);
+            bottom: var(--vertical-padding);
+            width: var(--side-column-width);
+            z-index: 1;
+            overflow: visible;
+        }
+
+        #warnsum {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        #warnsum img {
+            width: var(--weather-icon-size);
+            height: var(--weather-icon-size);
+            margin: 0;
+            flex: 0 0 auto;
+            object-fit: contain;
+        }
+
+        #warnsum div {
+            margin: 0;
+            text-align: center;
+        }
+
+        .warning-column {
+            position: absolute;
+            left: 0;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            overflow: visible;
+        }
+
+        .summary-column {
+            position: absolute;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            gap: var(--weather-stack-gap);
+            min-width: 0;
+        }
+
+        .weather-item {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--weather-item-gap);
+            height: var(--weather-row-height);
+            max-width: 100%;
+            white-space: nowrap;
+            font-size: var(--weather-font-size);
+            line-height: 1;
+        }
+
+        .weather-icon-invert {
+            filter: invert(1);
+        }
+
+        .warning-list {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-rows: repeat(2, var(--warning-row-height));
+            align-items: center;
+            row-gap: var(--warning-row-gap);
+            column-gap: var(--warning-column-gap);
+            width: max-content;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        #warnsum img.warning-icon {
+            width: auto;
+            height: var(--warning-row-height);
+            display: block;
+        }
+
+        #title {
+            font-size: var(--title-font-size);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(110, 20, 18, 0.45);
+        }
+
+        #hkt-time {
+            font-size: var(--time-font-size);
+            font-weight: 700;
+            line-height: 1.05;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(110, 20, 18, 0.45);
+        }
+
+        body[data-language="en"] #title {
+            font-size: var(--title-font-size-en);
+        }
+
+        body[data-language="en"] #hkt-time {
+            font-size: var(--time-font-size-en);
+        }
+    </style>
+    <script>
+        let currentLang = "tc";
+
+        const translations = {
+            en: {
+                title: "Smartvote Limited",
+                hktTimeLabel: "HKT Time: "
+            },
+            tc: {
+                title: "Smartvote Limited",
+                hktTimeLabel: "香港時間："
+            }
+        };
+
+        function updateTime() {
+            const now = new Date();
+            const hktOffset = 8 * 60;
+            const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+            const hkt = new Date(utc.getTime() + hktOffset * 60000);
+
+            const hktFormatted = `${padWithZero(hkt.getHours())}:${padWithZero(hkt.getMinutes())}:${padWithZero(hkt.getSeconds())}, ${padWithZero(hkt.getDate())}/${padWithZero(hkt.getMonth() + 1)}/${hkt.getFullYear()}`;
+
+            document.getElementById("hkt-time").textContent = translations[currentLang].hktTimeLabel + hktFormatted;
+        }
+
+        function padWithZero(number) {
+            return number.toString().padStart(2, "0");
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === "tc" ? "en" : "tc";
+            updateTranslations();
+            updateTime();
+        }
+
+        function updateTranslations() {
+            document.body.dataset.language = currentLang;
+            document.getElementById("title").textContent = translations[currentLang].title;
+        }
+
+        function createWeatherItem(iconSrc, value, invertIcon = false) {
+            const item = document.createElement("div");
+            item.className = "weather-item";
+
+            const icon = document.createElement("img");
+            icon.src = iconSrc;
+            icon.alt = "";
+            if (invertIcon) {
+                icon.className = "weather-icon-invert";
+            }
+
+            const text = document.createElement("div");
+            text.textContent = value;
+
+            item.append(icon, text);
+            return item;
+        }
+
+        function createWarningIcon(src) {
+            const icon = document.createElement("img");
+            icon.src = src;
+            icon.alt = "";
+            icon.className = "warning-icon";
+            icon.addEventListener("load", syncWeatherLayout, { once: true });
+            icon.addEventListener("error", syncWeatherLayout, { once: true });
+            return icon;
+        }
+
+        function ensureWeatherLayout() {
+            const warnsum = document.getElementById("warnsum");
+            let warningColumn = document.getElementById("warning-column");
+            let summaryColumn = document.getElementById("summary-column");
+
+            if (!warningColumn || !summaryColumn) {
+                warnsum.innerHTML = "";
+
+                warningColumn = document.createElement("div");
+                warningColumn.id = "warning-column";
+                warningColumn.className = "warning-column";
+
+                summaryColumn = document.createElement("div");
+                summaryColumn.id = "summary-column";
+                summaryColumn.className = "summary-column";
+
+                warnsum.append(warningColumn, summaryColumn);
+            }
+
+            return { warningColumn, summaryColumn };
+        }
+
+        function syncWeatherLayout() {
+            const warnsum = document.getElementById("warnsum");
+            const weatherZone = warnsum.parentElement;
+            const { warningColumn, summaryColumn } = ensureWeatherLayout();
+            const baseSideWidth = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--side-column-width")) || 240;
+            const columnGap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--weather-column-gap")) || 12;
+            const topOffset = Math.max(0, (warnsum.clientHeight - summaryColumn.offsetHeight) / 2);
+            const warningList = warningColumn.querySelector(".warning-list");
+            const warningWidth = warningList ? warningList.scrollWidth : 0;
+            const requiredWidth = Math.max(baseSideWidth, Math.ceil(summaryColumn.offsetWidth + columnGap + warningWidth));
+
+            weatherZone.style.width = `${requiredWidth}px`;
+            summaryColumn.style.top = `${topOffset}px`;
+            warningColumn.style.top = `${topOffset}px`;
+            warningColumn.style.right = `${summaryColumn.offsetWidth + columnGap}px`;
+        }
+
+        function renderWeatherSummary({ iconCode, temperature = "--", humidity = "--", uvIndex } = {}) {
+            const { summaryColumn } = ensureWeatherLayout();
+            summaryColumn.innerHTML = "";
+
+            const weatherIcon = iconCode
+                ? `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`
+                : "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
+
+            summaryColumn.append(createWeatherItem(weatherIcon, `${temperature}°C`));
+            summaryColumn.append(createWeatherItem("https://img.icons8.com/ios/50/wet.png", `${humidity}%`, true));
+
+            if (uvIndex !== undefined) {
+                summaryColumn.append(createWeatherItem("https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-uv-index-weather-flaticons-lineal-color-flat-icons-2.png", uvIndex));
+            }
+
+            syncWeatherLayout();
+        }
+
+        async function fetchData(url) {
+            const response = await fetch(url, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        async function fetchWeatherData() {
+            const weatherURL = "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread";
+
+            fetchData(weatherURL).then(data => {
+                const weatherIcon = data.icon?.[0];
+                const temperature = data.temperature?.data?.find(item => item.place === "Chek Lap Kok")?.value;
+                const humidity = data.humidity?.data?.find(item => item.place === "Hong Kong Observatory")?.value;
+                const uvIndex = data.uvindex?.data?.[0]?.value;
+
+                renderWeatherSummary({
+                    iconCode: weatherIcon,
+                    temperature: temperature ?? "--",
+                    humidity: humidity ?? "--",
+                    uvIndex
+                });
+
+                const warnsumURL = "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum";
+                return fetchData(warnsumURL);
+            }).then(data => {
+                const { warningColumn } = ensureWeatherLayout();
+                const warningList = document.createElement("div");
+                warningList.className = "warning-list";
+
+                const warningTypes = [
+                    { type: "WFIRE", codes: { WFIREY: "firey.gif", WFIRER: "firer.gif" } },
+                    { type: "WFROST", src: "frost.gif" },
+                    { type: "WHOT", src: "vhot.gif" },
+                    { type: "WCOLD", src: "cold.gif" },
+                    { type: "WMSGNL", src: "sms.gif" },
+                    { type: "WRAIN", codes: { WRAINA: "raina.gif", WRAINR: "rainr.gif", WRAINB: "rainb.gif" } },
+                    { type: "WFNTSA", src: "ntfl.gif" },
+                    { type: "WL", src: "landslip.gif" },
+                    { type: "WTCSGNL", codes: { TC1: "tc1.gif", TC3: "tc3.gif", TC8NE: "tc8ne.gif", TC8SE: "tc8b.gif", TC8NW: "tc8d.gif", TC8SW: "tc8c.gif", TC9: "tc9.gif", TC10: "tc10.gif" } },
+                    { type: "WTMW", src: "tsunami-warn.gif" },
+                    { type: "WTS", src: "ts.gif" }
+                ];
+
+                warningTypes.forEach(warning => {
+                    if (data[warning.type] !== undefined) {
+                        const warningData = data[warning.type];
+                        if (warning.codes && warningData.code) {
+                            const imgSrc = warning.codes[warningData.code];
+                            if (imgSrc) {
+                                warningList.append(createWarningIcon(`https://www.hko.gov.hk/en/wxinfo/dailywx/images/${imgSrc}`));
+                            }
+                        } else if (warning.src) {
+                            warningList.append(createWarningIcon(`https://www.hko.gov.hk/en/wxinfo/dailywx/images/${warning.src}`));
+                        }
+                    }
+                });
+
+                warningColumn.replaceChildren(warningList);
+                syncWeatherLayout();
+            }).catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            renderWeatherSummary();
+            fetchWeatherData();
+            setInterval(fetchWeatherData, 1000 * 60 * 5);
+
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            updateTranslations();
+            setInterval(toggleLanguage, 1000 * 30);
+
+            window.addEventListener("resize", syncWeatherLayout);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"><img src="assets/smv-logo.svg" alt="Smartvote Limited logo"></div>
+        <div class="content">
+            <div class="content-copy">
+                <div id="title">Smartvote Limited</div>
+                <div id="hkt-time">HKT Time: </div>
+            </div>
+        </div>
+        <div class="weather-zone">
+            <div id="warnsum"></div>
+        </div>
+    </div>
+</body>
+</html>
