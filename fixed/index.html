@@ -28,14 +28,14 @@
         </div>
 
         <!-- Weather + warnings right: absolute -->
-        <div style="position:absolute; right:60px; top:8px; bottom:8px; width:290px; display:flex; align-items:center; gap:12px; box-sizing:border-box;">
-            <!-- Warnings stacked on left -->
+        <div style="position:absolute; right:60px; top:8px; bottom:8px; width:290px; display:flex; align-items:center; justify-content:flex-end; gap:8px; box-sizing:border-box;">
+            <!-- Warnings on the left of weather data -->
             <div id="warning-badges" style="display:flex; flex-direction:column; gap:3px; flex-shrink:0;">
                 <!-- JS populates <img> here -->
             </div>
 
-            <!-- Readings -->
-            <div style="display:flex; flex-direction:column; gap:1px; flex-shrink:0;">
+            <!-- Readings (temperature right hand side next to warning icons) -->
+            <div style="display:flex; flex-direction:column; gap:1px; flex-shrink:0; align-items:flex-end;">
                 <div style="display:flex; align-items:center; gap:4px; font-size:17px; font-weight:700; white-space:nowrap; line-height:1;">
                     <img id="wx-icon" src="https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png" alt="" style="width:22px; height:22px; flex-shrink:0;">
                     <span id="temp">--°C</span>
@@ -76,11 +76,17 @@
 
         function setWeather({ iconCode, temperature = "--", humidity = "--", uvIndex } = {}) {
             const iconEl = document.getElementById("wx-icon");
-            if (iconCode) {
-                iconEl.src = `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`;
+            const t = parseFloat(temperature);
+            let wxIcon;
+            if (!isNaN(t) && t >= 30) {
+                // High temperature: use sunny/hot icon to follow the temperature
+                wxIcon = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic50.png";
+            } else if (iconCode) {
+                wxIcon = `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`;
             } else {
-                iconEl.src = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
+                wxIcon = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
             }
+            iconEl.src = wxIcon;
             document.getElementById("temp").textContent = `${temperature}°C`;
             document.getElementById("humidity").textContent = `${humidity}%`;
 
