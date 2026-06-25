@@ -76,16 +76,9 @@
 
         function setWeather({ iconCode, temperature = "--", humidity = "--", uvIndex } = {}) {
             const iconEl = document.getElementById("wx-icon");
-            const t = parseFloat(temperature);
-            let wxIcon;
-            if (!isNaN(t) && t >= 30) {
-                // High temperature: use sunny/hot icon to follow the temperature
-                wxIcon = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic50.png";
-            } else if (iconCode) {
-                wxIcon = `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`;
-            } else {
-                wxIcon = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
-            }
+            const wxIcon = iconCode
+                ? `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`
+                : "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
             iconEl.src = wxIcon;
             document.getElementById("temp").textContent = `${temperature}°C`;
             document.getElementById("humidity").textContent = `${humidity}%`;
