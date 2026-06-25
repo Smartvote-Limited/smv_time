@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=190, initial-scale=1.0, user-scalable=no">
+    <title>Smartvote Limited - Fixed</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 1080px;
+            height: 190px;
+            overflow: hidden;
+            background-color: #b5312c;
+            font-family: Arial, "Helvetica Neue", sans-serif;
+            color: #fff;
+        }
+
+        .banner {
+            width: 1080px;
+            height: 190px;
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Left: Logo */
+        .logo {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            width: 130px;
+            justify-content: center;
+        }
+
+        /* Center: Title + Time (the info) */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            min-width: 0;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(110, 20, 18, 0.4);
+        }
+
+        .time {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.05;
+            margin-top: 2px;
+            white-space: nowrap;
+            opacity: 0.95;
+        }
+
+        /* Right: Weather + warnings to match the real screenshot */
+        .weather {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 310px;
+        }
+
+        .warning-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .warning-badges img {
+            height: 38px;
+            width: auto;
+            display: block;
+            border-radius: 3px;
+        }
+
+        .readings {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .reading {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .reading img {
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .reading:first-child {
+            font-size: 20px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <!-- Logo (left) - real logo -->
+        <div class="logo">
+            <img src="../assets/smv-logo.svg" alt="Smartvote Limited" style="height: 110px; width: auto; filter: brightness(0) invert(1);">
+        </div>
+
+        <!-- Main info (center) -->
+        <div class="main">
+            <div class="title" id="title">Smartvote Limited</div>
+            <div class="time" id="hkt-time">HKT Time: --:--:--</div>
+        </div>
+
+        <!-- Weather + warnings (right) - match real look -->
+        <div class="weather">
+            <!-- Warnings stacked on left, like the screenshot -->
+            <div id="warning-badges" class="warning-badges">
+                <!-- JS populates <img> here, e.g. Very Hot + Thunderstorm -->
+            </div>
+
+            <!-- Readings -->
+            <div class="readings">
+                <div class="reading">
+                    <img id="wx-icon" src="https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png" alt="">
+                    <span id="temp">--°C</span>
+                </div>
+                <div class="reading">
+                    <img src="https://img.icons8.com/ios/50/wet.png" alt="" style="filter: invert(1);">
+                    <span id="humidity">--%</span>
+                </div>
+                <div class="reading" id="uv-reading" style="display: none;">
+                    <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-uv-index-weather-flaticons-lineal-color-flat-icons-2.png" alt="">
+                    <span id="uv">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = "tc";
+
+        const translations = {
+            en: { title: "Smartvote Limited", timeLabel: "HKT Time: " },
+            tc: { title: "Smartvote Limited", timeLabel: "香港時間： " }
+        };
+
+        function pad(n) { return n.toString().padStart(2, "0"); }
+
+        function updateTime() {
+            const now = new Date();
+            const hkt = new Date(now.getTime() + (now.getTimezoneOffset() + 480) * 60000);
+            const hktFormatted = `${pad(hkt.getHours())}:${pad(hkt.getMinutes())}:${pad(hkt.getSeconds())}, ${pad(hkt.getDate())}/${pad(hkt.getMonth() + 1)}/${hkt.getFullYear()}`;
+            const label = translations[currentLang].timeLabel;
+            document.getElementById("hkt-time").textContent = label + hktFormatted;
+        }
+
+        function updateTitle() {
+            document.getElementById("title").textContent = translations[currentLang].title;
+        }
+
+        function setWeather({ iconCode, temperature = "--", humidity = "--", uvIndex } = {}) {
+            const iconEl = document.getElementById("wx-icon");
+            if (iconCode) {
+                iconEl.src = `https://www.hko.gov.hk/images/HKOWxIconOutline/pic${iconCode}.png`;
+            } else {
+                iconEl.src = "https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png";
+            }
+            document.getElementById("temp").textContent = `${temperature}°C`;
+            document.getElementById("humidity").textContent = `${humidity}%`;
+
+            const uvSpan = document.getElementById("uv");
+            const uvReading = document.getElementById("uv-reading");
+            if (uvIndex !== undefined && uvIndex !== null) {
+                uvSpan.textContent = uvIndex;
+                uvReading.style.display = "flex";
+            } else {
+                uvReading.style.display = "none";
+            }
+        }
+
+        async function fetchWeather() {
+            try {
+                const r = await fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread", { cache: "no-store" });
+                if (!r.ok) throw new Error("weather fetch failed");
+                const data = await r.json();
+
+                const iconCode = data.icon?.[0];
+                const temperature = data.temperature?.data?.find(d => d.place === "Chek Lap Kok")?.value;
+                const humidity = data.humidity?.data?.find(d => d.place === "Hong Kong Observatory")?.value;
+                const uvIndex = data.uvindex?.data?.[0]?.value;
+
+                setWeather({ iconCode, temperature, humidity, uvIndex });
+
+                // Real warning badges (stacked, larger, match screenshot style)
+                try {
+                    const wr = await fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum", { cache: "no-store" });
+                    const wdata = await wr.json();
+                    const container = document.getElementById("warning-badges");
+                    container.innerHTML = "";
+
+                    // Map to the prominent badge-style images (Very Hot + Thunderstorm shown in your screenshot)
+                    const badgeMap = [
+                        { type: "WHOT", src: "https://www.hko.gov.hk/en/wxinfo/dailywx/images/vhot.gif" },
+                        { type: "WTS",  src: "https://www.hko.gov.hk/en/wxinfo/dailywx/images/ts.gif" },
+                        { type: "WTCSGNL", codes: { TC1: "tc1.gif", TC3: "tc3.gif", TC8NE: "tc8ne.gif", TC8SE: "tc8b.gif", TC8NW: "tc8d.gif", TC8SW: "tc8c.gif", TC9: "tc9.gif", TC10: "tc10.gif" } },
+                        { type: "WRAIN", codes: { WRAINA: "raina.gif", WRAINR: "rainr.gif", WRAINB: "rainb.gif" } },
+                        { type: "WFIRE", codes: { WFIREY: "firey.gif", WFIRER: "firer.gif" } }
+                    ];
+
+                    let added = 0;
+                    badgeMap.forEach(item => {
+                        const wd = wdata[item.type];
+                        if (wd !== undefined) {
+                            let src = null;
+                            if (item.codes && wd.code) {
+                                const f = item.codes[wd.code];
+                                if (f) src = `https://www.hko.gov.hk/en/wxinfo/dailywx/images/${f}`;
+                            } else if (item.src) {
+                                src = item.src;
+                            }
+                            if (src) {
+                                const img = document.createElement("img");
+                                img.src = src;
+                                img.alt = item.type;
+                                container.appendChild(img);
+                                added++;
+                            }
+                        }
+                    });
+
+                    if (added === 0) {
+                        // No warnings - optionally leave empty or show a clean state
+                        container.innerHTML = "";
+                    }
+                } catch (_) {
+                    document.getElementById("warning-badges").innerHTML = "";
+                }
+            } catch (e) {
+                console.warn("Weather unavailable", e);
+                setWeather({});
+                document.getElementById("warning-badges").innerHTML = "";
+            }
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === "tc" ? "en" : "tc";
+            updateTitle();
+            updateTime();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateTitle();
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            fetchWeather();
+            setInterval(fetchWeather, 1000 * 60 * 6);
+
+            // Cycle language every 30s
+            setInterval(toggleLang, 1000 * 30);
+        });
+    </script>
+</body>
+</html>
