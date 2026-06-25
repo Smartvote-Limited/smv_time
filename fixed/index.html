@@ -5,150 +5,45 @@
     <meta name="viewport" content="width=1080, height=190, initial-scale=1.0, user-scalable=no">
     <title>Smartvote Limited - Fixed</title>
     <style>
-        * { box-sizing: border-box; }
-
         html, body {
             margin: 0;
             padding: 0;
-            width: 1080px;
-            height: 190px;
-            overflow: hidden;
-            background-color: #b5312c;
-            font-family: Arial, "Helvetica Neue", sans-serif;
-            color: #fff;
-        }
-
-        .banner {
-            width: 1080px;
-            height: 190px;
-            padding: 10px 28px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Left: Logo */
-        .logo {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            width: 130px;
-            justify-content: center;
-        }
-
-        /* Center: Title + Time (the info) */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            min-width: 0;
-            padding-left: 8px;
-            padding-right: 8px;
-        }
-
-        .title {
-            font-size: 26px;
-            font-weight: 700;
-            line-height: 1;
-            white-space: nowrap;
-            text-shadow: 0 1px 2px rgba(110, 20, 18, 0.4);
-        }
-
-        .time {
-            font-size: 18px;
-            font-weight: 600;
-            line-height: 1.05;
-            margin-top: 2px;
-            white-space: nowrap;
-            opacity: 0.95;
-        }
-
-        /* Right: Weather + warnings to match the real screenshot */
-        .weather {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            width: 310px;
-        }
-
-        .warning-badges {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex-shrink: 0;
-        }
-
-        .warning-badges img {
-            height: 38px;
-            width: auto;
-            display: block;
-            border-radius: 3px;
-        }
-
-        .readings {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex-shrink: 0;
-        }
-
-        .reading {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 18px;
-            font-weight: 600;
-            white-space: nowrap;
-            line-height: 1;
-        }
-
-        .reading img {
-            width: 26px;
-            height: 26px;
-            flex-shrink: 0;
-        }
-
-        .reading:first-child {
-            font-size: 20px;
-            font-weight: 700;
+            box-sizing: border-box;
         }
     </style>
 </head>
-<body>
-    <div class="banner">
-        <!-- Logo (left) - real logo -->
-        <div class="logo">
+<body style="margin:0; padding:0; width:1080px; height:190px; overflow:hidden; background-color:#b5312c; font-family:Arial, 'Helvetica Neue', sans-serif; color:#fff; box-sizing:border-box;">
+    <div style="width:1080px; height:190px; padding:10px 28px; display:flex; align-items:center; gap:20px; box-sizing:border-box;">
+        <!-- Logo (left) - imported from ../assets/smv-logo.svg -->
+        <div style="flex-shrink:0; display:flex; align-items:center; width:145px; justify-content:flex-start;">
             <img src="../assets/smv-logo.svg" alt="Smartvote Limited" style="height: 110px; width: auto; filter: brightness(0) invert(1);">
         </div>
 
-        <!-- Main info (center) -->
-        <div class="main">
-            <div class="title" id="title">Smartvote Limited</div>
-            <div class="time" id="hkt-time">HKT Time: --:--:--</div>
+        <!-- Main info (center) - centered -->
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:0; padding:0 8px; text-align:center; box-sizing:border-box;">
+            <div id="title" style="font-size:30px; font-weight:700; line-height:1; white-space:nowrap; text-shadow:0 1px 2px rgba(110,20,18,0.4);">Smartvote Limited</div>
+            <div id="hkt-time" style="font-size:17px; font-weight:600; line-height:1.05; margin-top:3px; white-space:nowrap; opacity:0.95;">HKT Time: --:--:--</div>
         </div>
 
-        <!-- Weather + warnings (right) - match real look -->
-        <div class="weather">
-            <!-- Warnings stacked on left, like the screenshot -->
-            <div id="warning-badges" class="warning-badges">
-                <!-- JS populates <img> here, e.g. Very Hot + Thunderstorm -->
+        <!-- Weather + warnings (right) -->
+        <div style="flex-shrink:0; display:flex; align-items:center; gap:14px; width:295px; box-sizing:border-box;">
+            <!-- Warnings stacked on left -->
+            <div id="warning-badges" style="display:flex; flex-direction:column; gap:4px; flex-shrink:0;">
+                <!-- JS populates <img> here -->
             </div>
 
             <!-- Readings -->
-            <div class="readings">
-                <div class="reading">
-                    <img id="wx-icon" src="https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png" alt="">
+            <div style="display:flex; flex-direction:column; gap:2px; flex-shrink:0;">
+                <div style="display:flex; align-items:center; gap:5px; font-size:18px; font-weight:700; white-space:nowrap; line-height:1;">
+                    <img id="wx-icon" src="https://www.hko.gov.hk/images/HKOWxIconOutline/pic60.png" alt="" style="width:24px; height:24px; flex-shrink:0;">
                     <span id="temp">--°C</span>
                 </div>
-                <div class="reading">
-                    <img src="https://img.icons8.com/ios/50/wet.png" alt="" style="filter: invert(1);">
+                <div style="display:flex; align-items:center; gap:5px; font-size:16px; font-weight:600; white-space:nowrap; line-height:1;">
+                    <img src="https://img.icons8.com/ios/50/wet.png" alt="" style="width:24px; height:24px; flex-shrink:0; filter:invert(1);">
                     <span id="humidity">--%</span>
                 </div>
-                <div class="reading" id="uv-reading" style="display: none;">
-                    <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-uv-index-weather-flaticons-lineal-color-flat-icons-2.png" alt="">
+                <div id="uv-reading" style="display:none; align-items:center; gap:5px; font-size:16px; font-weight:600; white-space:nowrap; line-height:1;">
+                    <img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/64/external-uv-index-weather-flaticons-lineal-color-flat-icons-2.png" alt="" style="width:24px; height:24px; flex-shrink:0;">
                     <span id="uv">--</span>
                 </div>
             </div>
@@ -160,7 +55,7 @@
 
         const translations = {
             en: { title: "Smartvote Limited", timeLabel: "HKT Time: " },
-            tc: { title: "Smartvote Limited", timeLabel: "香港時間： " }
+            tc: { title: "泓汛科技有限公司", timeLabel: "香港時間： " }
         };
 
         function pad(n) { return n.toString().padStart(2, "0"); }
@@ -241,6 +136,10 @@
                                 const img = document.createElement("img");
                                 img.src = src;
                                 img.alt = item.type;
+                                img.style.height = "42px";
+                                img.style.width = "auto";
+                                img.style.display = "block";
+                                img.style.borderRadius = "3px";
                                 container.appendChild(img);
                                 added++;
                             }
