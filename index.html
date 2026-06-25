@@ -15,8 +15,9 @@
             --left-padding: calc(120px * var(--stage-scale));
             --right-padding: calc(120px * var(--stage-scale));
             --side-column-width: calc(240px * var(--stage-scale));
+            --side-gap: calc(20px * var(--stage-scale));
             --vertical-padding: calc(16px * var(--stage-scale));
-            --logo-height: calc(220px * var(--stage-scale));
+            --logo-height: calc(180px * var(--stage-scale));
             --content-gap: calc(10px * var(--stage-scale));
             --content-padding-x: calc(28px * var(--stage-scale));
             --content-padding-y-top: calc(8px * var(--stage-scale));
@@ -68,22 +69,19 @@
             height: var(--stage-height);
             padding: var(--vertical-padding) var(--right-padding) var(--vertical-padding) var(--left-padding);
             background-color: var(--stage-red);
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
             position: relative;
-            gap: 20px;
             overflow: hidden;
         }
 
         .logo {
+            position: absolute;
+            left: var(--left-padding);
+            top: var(--vertical-padding);
+            bottom: var(--vertical-padding);
             width: var(--side-column-width);
-            height: 100%;
-            text-align: center;
-            flex-shrink: 0;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .logo img {
